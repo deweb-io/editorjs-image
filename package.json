@@ -28,7 +28,8 @@
     "build": "vite build",
     "lint": "eslint",
     "lint:errors": "eslint --quiet",
-    "lint:fix": "eslint --fix"
+    "lint:fix": "eslint --fix",
+    "prepare": "npm run build"
   },
   "author": {
     "name": "CodeX",
