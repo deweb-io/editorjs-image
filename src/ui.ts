@@ -1,4 +1,10 @@
-import { IconPicture, IconText, IconLink } from '@codexteam/icons';
+// Tabler icons as SVG strings
+const tablerIcons = {
+  photo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 2 5 5v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="m14.5 12.5-3-3a2 2 0 0 0-3 0l-2 2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L8 19"/></svg>',
+  text: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></svg>',
+  link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+};
+
 import { make } from './utils/dom';
 import type { API } from '@editorjs/editorjs';
 import type { ImageConfig } from './types/types';
@@ -66,16 +72,6 @@ interface Nodes {
    * Container for text inputs below image.
    */
   textInputsContainer: HTMLElement;
-
-  /**
-   * Wrapper for caption input with icon.
-   */
-  captionWrapper: HTMLElement;
-
-  /**
-   * Wrapper for link input with icon.
-   */
-  linkWrapper: HTMLElement;
 }
 
 /**
@@ -145,31 +141,16 @@ export default class Ui {
     this.onSelectFile = onSelectFile;
     this.readOnly = readOnly;
 
-    // Create caption wrapper with icon
-    const captionWrapper = make('div', [this.CSS.inputWrapper]);
-    const captionIcon = make('div', [this.CSS.inputIcon]);
-
-    captionIcon.innerHTML = IconText;
-
+    // Create simplified caption input
     const captionInput = make('div', [this.CSS.input, this.CSS.caption], {
       contentEditable: !this.readOnly,
     });
 
-    captionWrapper.appendChild(captionIcon);
-    captionWrapper.appendChild(captionInput);
-
-    // Create link wrapper with icon
-    const linkWrapper = make('div', [this.CSS.inputWrapper]);
-    const linkIcon = make('div', [this.CSS.inputIcon]);
-
-    linkIcon.innerHTML = IconLink;
-
+    // Create simplified link input (hidden by default)
     const linkInput = make('div', [this.CSS.input, this.CSS.linkInput], {
       contentEditable: !this.readOnly,
+      style: 'display: none;', // Hidden by default, shown when toggled in menu
     });
-
-    linkWrapper.appendChild(linkIcon);
-    linkWrapper.appendChild(linkInput);
 
     this.nodes = {
       wrapper: make('div', [this.CSS.baseClass, this.CSS.wrapper]),
@@ -180,8 +161,6 @@ export default class Ui {
       textInputsContainer: make('div', [this.CSS.textInputsContainer]),
       caption: captionInput,
       linkInput: linkInput,
-      captionWrapper: captionWrapper,
-      linkWrapper: linkWrapper,
     };
 
     /**
@@ -207,8 +186,8 @@ export default class Ui {
     this.nodes.linkInput.dataset.placeholder = 'Enter link URL...';
 
     this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
-    this.nodes.textInputsContainer.appendChild(this.nodes.captionWrapper);
-    this.nodes.textInputsContainer.appendChild(this.nodes.linkWrapper);
+    this.nodes.textInputsContainer.appendChild(this.nodes.caption);
+    this.nodes.textInputsContainer.appendChild(this.nodes.linkInput);
 
     this.nodes.wrapper.appendChild(this.nodes.imageContainer);
     this.nodes.wrapper.appendChild(this.nodes.textInputsContainer);
@@ -333,6 +312,16 @@ export default class Ui {
   }
 
   /**
+   * Toggles link input visibility
+   * @param show - whether to show or hide the link input
+   */
+  public toggleLinkInput(show: boolean): void {
+    if (this.nodes.linkInput !== undefined) {
+      this.nodes.linkInput.style.display = show ? 'block' : 'none';
+    }
+  }
+
+  /**
    * Changes UI status
    * @param status - see {@link Ui.status} constants
    */
@@ -366,8 +355,6 @@ export default class Ui {
       textInputsContainer: 'image-tool__text-inputs',
       caption: 'image-tool__caption',
       linkInput: 'image-tool__link',
-      inputWrapper: 'image-tool__input-wrapper',
-      inputIcon: 'image-tool__input-icon',
     };
   };
 
@@ -377,7 +364,7 @@ export default class Ui {
   private createFileButton(): HTMLElement {
     const button = make('div', [this.CSS.button]);
 
-    button.innerHTML = this.config.buttonContent ?? `${IconPicture} ${this.api.i18n.t('Select an Image')}`;
+    button.innerHTML = this.config.buttonContent ?? `${tablerIcons.photo} ${this.api.i18n.t('Select an Image')}`;
 
     button.addEventListener('click', () => {
       this.onSelectFile();

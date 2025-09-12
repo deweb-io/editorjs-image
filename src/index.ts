@@ -35,7 +35,22 @@ import './index.css';
 import Ui from './ui';
 import Uploader from './uploader';
 
-import { IconAddBorder, IconAddBackground, IconPicture, IconText, IconLink } from '@codexteam/icons';
+// Tabler icons as SVG strings
+const tablerIcons = {
+  photo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 2 5 5v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="m14.5 12.5-3-3a2 2 0 0 0-3 0l-2 2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L8 19"/></svg>',
+  text: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></svg>',
+  link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  palette: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
+  border: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/><path d="M4 6V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>',
+  resize: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>',
+  alignLeft: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12H3"/><path d="M17 18H3"/><path d="M21 6H3"/></svg>',
+  alignCenter: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8"/><path d="M6 18h12"/><path d="M3 6h18"/></svg>',
+  alignRight: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12H9"/><path d="M21 18H7"/><path d="M21 6H3"/></svg>',
+  boxSmall: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9h6v6H9z"/></svg>',
+  boxMedium: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12v12H6z"/></svg>',
+  boxFull: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M8 8 3 3m18 0-5 5m0 8 5 5M3 21l5-5"/></svg>',
+};
+
 import type { ActionConfig, UploadResponseFormat, ImageToolData, ImageConfig, HTMLPasteEventDetailExtended, ImageSetterParam, FeaturesConfig } from './types/types';
 
 type ImageToolConstructorOptions = BlockToolConstructorOptions<ImageToolData, ImageConfig>;
@@ -166,7 +181,7 @@ export default class ImageTool implements BlockTool {
    */
   public static get toolbox(): ToolboxConfig {
     return {
-      icon: IconPicture,
+      icon: tablerIcons.photo,
       title: 'Image',
     };
   }
@@ -178,19 +193,19 @@ export default class ImageTool implements BlockTool {
     return [
       {
         name: 'withBorder',
-        icon: IconAddBorder,
+        icon: tablerIcons.border,
         title: 'With border',
         toggle: true,
       },
       {
         name: 'withBackground',
-        icon: IconAddBackground,
+        icon: tablerIcons.palette,
         title: 'With background',
         toggle: true,
       },
       {
         name: 'linkUrl',
-        icon: IconLink,
+        icon: tablerIcons.link,
         title: 'With Link',
         toggle: true,
       },
@@ -236,18 +251,6 @@ export default class ImageTool implements BlockTool {
    * @returns TunesMenuConfig
    */
   public renderSettings(): TunesMenuConfig {
-    // Professional SVG icons for sizes
-    const sizeSmallIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="4" y="4" width="8" height="8" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
-    const sizeMediumIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
-    const sizeFullIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="0.5" width="15" height="15" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M0.5 0.5L4 4M15.5 0.5L12 4M0.5 15.5L4 12M15.5 15.5L12 12" stroke="currentColor" stroke-width="1.5"/></svg>';
-    const sizeIcon = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="3" cy="3" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="11" cy="3" r="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="3" cy="11" r="1" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>';
-
-    // Professional SVG icons for alignment
-    const alignLeftIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12v2H2V3zm0 4h8v2H2V7zm0 4h10v2H2v-2z" fill="currentColor"/></svg>';
-    const alignCenterIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12v2H2V3zm2 4h8v2H4V7zm1 4h6v2H5v-2z" fill="currentColor"/></svg>';
-    const alignRightIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12v2H2V3zm4 4h8v2H6V7zm2 4h6v2H8v-2z" fill="currentColor"/></svg>';
-    const alignIcon = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 2h12v2H1V2zm2 3h8v2H3V5zm0 3h8v2H3V8zm-2 3h12v2H1v-2z" fill="currentColor"/></svg>';
-
     // Merge default tunes with the ones that might be added by user
     // @see https://github.com/editor-js/image/pull/49
     const tunes = ImageTool.tunes.concat(this.config.actions || []);
@@ -260,7 +263,7 @@ export default class ImageTool implements BlockTool {
     if (this.config.features?.caption === 'optional') {
       tunes.push({
         name: 'caption',
-        icon: IconText,
+        icon: tablerIcons.text,
         title: 'With caption',
         toggle: true,
       });
@@ -312,32 +315,27 @@ export default class ImageTool implements BlockTool {
       return this.data.alignment === alignment;
     };
 
-    const tuneItems = availableTunes.map(tune => ({
+    // Filter out border and background from main menu (they'll be in Style submenu)
+    const filteredTunes = availableTunes.filter(tune =>
+      tune.name !== 'withBorder' && tune.name !== 'withBackground'
+    );
+
+    const tuneItems = filteredTunes.map(tune => ({
       icon: tune.icon,
       title: this.api.i18n.t(tune.title),
       toggle: tune.toggle,
       isActive: isActive(tune),
-      hint: tune.name === 'withBorder'
+      hint: tune.name === 'linkUrl'
         ? {
-          title: 'Border Style',
-          description: 'Add a decorative border around the image',
-        }
-        : tune.name === 'withBackground'
-          ? {
-            title: 'Background Style',
-            description: 'Add a colored background behind the image',
+            title: 'Link Settings',
+            description: 'Make image clickable - edit URL in input field below caption',
           }
-          : tune.name === 'linkUrl'
-            ? {
-              title: 'Link Settings',
-              description: 'Make image clickable - edit URL in input field below caption',
+        : tune.name === 'caption'
+          ? {
+              title: 'Caption Display',
+              description: 'Show or hide the caption text below the image',
             }
-            : tune.name === 'caption'
-              ? {
-                title: 'Caption Display',
-                description: 'Show or hide the caption text below the image',
-              }
-              : undefined,
+          : undefined,
       onActivate: () => {
         /** If it'a user defined tune, execute it's callback stored in action property */
         if (typeof tune.action === 'function') {
@@ -362,12 +360,12 @@ export default class ImageTool implements BlockTool {
 
     // Create size menu item with children
     const sizeMenuItem = {
-      icon: sizeIcon,
+      icon: tablerIcons.resize,
       title: 'Size',
       children: {
         items: [
           {
-            icon: sizeSmallIcon,
+            icon: tablerIcons.boxSmall,
             title: 'Small',
             toggle: 'size-group',
             isActive: isSizeActive('size-small'),
@@ -377,7 +375,7 @@ export default class ImageTool implements BlockTool {
             },
           },
           {
-            icon: sizeMediumIcon,
+            icon: tablerIcons.boxMedium,
             title: 'Medium',
             toggle: 'size-group',
             isActive: isSizeActive('size-medium'),
@@ -387,7 +385,7 @@ export default class ImageTool implements BlockTool {
             },
           },
           {
-            icon: sizeFullIcon,
+            icon: tablerIcons.boxFull,
             title: 'Full width',
             toggle: 'size-group',
             isActive: isSizeActive('size-full'),
@@ -402,12 +400,12 @@ export default class ImageTool implements BlockTool {
 
     // Create alignment menu item with children
     const alignmentMenuItem = {
-      icon: alignIcon,
+      icon: tablerIcons.alignCenter,
       title: 'Alignment',
       children: {
         items: [
           {
-            icon: alignLeftIcon,
+            icon: tablerIcons.alignLeft,
             title: 'Left',
             toggle: 'alignment-group',
             isActive: isAlignmentActive('alignment-left'),
@@ -417,7 +415,7 @@ export default class ImageTool implements BlockTool {
             },
           },
           {
-            icon: alignCenterIcon,
+            icon: tablerIcons.alignCenter,
             title: 'Center',
             toggle: 'alignment-group',
             isActive: isAlignmentActive('alignment-center'),
@@ -427,7 +425,7 @@ export default class ImageTool implements BlockTool {
             },
           },
           {
-            icon: alignRightIcon,
+            icon: tablerIcons.alignRight,
             title: 'Right',
             toggle: 'alignment-group',
             isActive: isAlignmentActive('alignment-right'),
@@ -440,12 +438,53 @@ export default class ImageTool implements BlockTool {
       },
     };
 
-    // Add separator and size/alignment menu items
+    // Create style submenu for border and background
+    const styleMenuItem = {
+      icon: tablerIcons.palette,
+      title: 'Style',
+      children: {
+        items: [
+          {
+            icon: tablerIcons.border,
+            title: 'Border',
+            toggle: true,
+            isActive: isActive({ name: 'withBorder' } as ActionConfig),
+            hint: {
+              title: 'Border Style',
+              description: 'Add a decorative border around the image',
+            },
+            onActivate: () => {
+              const newState = !isActive({ name: 'withBorder' } as ActionConfig);
+
+              this.tuneToggled('withBorder', newState);
+            },
+          },
+          {
+            icon: tablerIcons.palette,
+            title: 'Background',
+            toggle: true,
+            isActive: isActive({ name: 'withBackground' } as ActionConfig),
+            hint: {
+              title: 'Background Style',
+              description: 'Add a colored background behind the image',
+            },
+            onActivate: () => {
+              const newState = !isActive({ name: 'withBackground' } as ActionConfig);
+
+              this.tuneToggled('withBackground', newState);
+            },
+          },
+        ],
+      },
+    };
+
+    // Add separator and size/alignment/style menu items
     return [
       ...tuneItems,
       { type: 'separator' },
       sizeMenuItem,
       alignmentMenuItem,
+      styleMenuItem,
     ];
   }
 
@@ -621,6 +660,7 @@ export default class ImageTool implements BlockTool {
       }
     } else if (tuneName === 'linkUrl') {
       this.ui.applyTune('link', state);
+      this.ui.toggleLinkInput(state); // Toggle link input visibility
 
       if (state == false) {
         this._data.linkUrl = '';
