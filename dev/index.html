@@ -119,6 +119,7 @@
         image: {
           class: ImageTool,
           config: {
+            // Test both endpoint and custom uploader approaches
             endpoints: {
               byFile: "http://localhost:8008/uploadFile",
               byUrl: "http://localhost:8008/fetchUrl"
@@ -128,7 +129,48 @@
             field: "image",
 
             // Allowed file types
-            types: "image/*"
+            types: "image/*",
+
+            // Test custom uploader (uncomment the lines below to test custom uploader instead of endpoints)
+            /*
+            uploader: {
+              async uploadByFile(file) {
+                console.log('Custom uploadByFile called with:', file);
+                // Simulate getting image dimensions
+                const getImageSize = (file) => {
+                  return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve({ width: img.width, height: img.height });
+                    img.src = URL.createObjectURL(file);
+                  });
+                };
+                
+                const { width, height } = await getImageSize(file);
+                // Simulate upload delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                return {
+                  success: 1,
+                  file: {
+                    url: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=800&auto=format&fit=crop",
+                    width,
+                    height,
+                    customProperty: "test-value"
+                  }
+                };
+              },
+              async uploadByUrl(url) {
+                console.log('Custom uploadByUrl called with:', url);
+                return {
+                  success: 1,
+                  file: {
+                    url: url,
+                    customProperty: "url-upload"
+                  }
+                };
+              }
+            }
+            */
           }
         }
       },

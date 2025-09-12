@@ -186,6 +186,8 @@ This Tool works by one of the following schemes:
 3. Uploading by drag-n-drop file
 4. Uploading by pasting from Clipboard
 
+**Enhanced Image Tool maintains full backward compatibility** with existing custom uploader implementations. All additional properties returned by your custom uploader (such as `width`, `height`, `color`, `extension`, etc.) are preserved and available in the saved data.
+
 ### Uploading files from device <a name="from-device"></a>
 
 Scenario:
