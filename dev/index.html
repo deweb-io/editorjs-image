@@ -1,54 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image Plugin Test | EditorJS</title>
-  </head>
-  <body>
-    <div id="editorjs"></div>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
-    <script type="module">
-      import ImageTool from "../src/index.ts";
-      const editor = new EditorJS({
-        holder: "editorjs",
-        data: {
-          time: 1700475383740,
-          blocks: [
-            {
-              id: "hZAjSnqYMX",
-              type: "image",
-              data: {
-                file: {
-                  url: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                },
-                withBorder: false,
-                withBackground: false,
-                stretched: false,
-                caption: "kimitsu no yayiba",
-              },
-            },
-          ],
-        },
 
-        tools: {
-          image: {
-            class: ImageTool,
-            config: {
-              endpoints: {
-                byFile: "http://localhost:8008/uploadFile",
-                byUrl: "http://localhost:8008/fetchUrl",
-              },
-              features: {
-                caption: "optional",
-                border: false,
-                background: false,
-                stretch: true,
-              },
-            },
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Plugin Test - All Options | EditorJS</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    .demo-header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .demo-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .demo-header p {
+      margin: 0;
+      color: #7f8c8d;
+    }
+
+    #editorjs {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      min-height: 400px;
+    }
+
+    .feature-info {
+      background: #e8f5e8;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      border-left: 4px solid #27ae60;
+    }
+
+    .feature-info h3 {
+      margin: 0 0 10px 0;
+      color: #27ae60;
+    }
+
+    .feature-info ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="demo-header">
+    <h1>🖼️ EditorJS Image Tool - All Features Demo</h1>
+    <p>Test all image tool capabilities including alt text, captions, styling options, and more!</p>
+  </div>
+
+  <div id="editorjs"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+  <script type="module">
+    import ImageTool from "../src/index.ts";
+
+    const editor = new EditorJS({
+      holder: "editorjs",
+      placeholder: "Click here to start editing and test all image features...",
+      data: {
+        time: Date.now(),
+        blocks: [
+          {
+            id: "demo-text-1",
+            type: "paragraph",
+            data: {
+              text: "🎨 <b>Image Tool Demo</b> - Click on the image to access settings menu with border, background, and link options. Test all features like alt text, captions, and styling toggles."
+            }
           },
-        },
-      });
-    </script>
-  </body>
+          {
+            id: "demo-image-1",
+            type: "image",
+            data: {
+              file: {
+                url: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=800&auto=format&fit=crop"
+              }
+            }
+          },
+          {
+            id: "demo-text-2",
+            type: "paragraph",
+            data: {
+              text: "🆕 <b>Add More Images</b> - Use the + button in the toolbar to add new image blocks. You can upload files, paste URLs, or drag and drop images directly!"
+            }
+          }
+        ]
+      },
+
+      tools: {
+        image: {
+          class: ImageTool,
+          config: {
+            endpoints: {
+              byFile: "http://localhost:8008/uploadFile",
+              byUrl: "http://localhost:8008/fetchUrl"
+            },
+
+            // Enable all features for comprehensive testing
+            features: {
+              caption: "optional",  // Users can toggle caption visibility
+              border: true,         // Enable border toggle
+              background: true,     // Enable background toggle
+              link: true           // Enable link functionality
+            },
+
+            // Custom placeholders for better UX
+            captionPlaceholder: "Enter image caption...",
+
+            // Custom button content
+            buttonContent: "📁 Select an image file",
+
+            // Additional request data for uploads (if needed)
+            additionalRequestData: {
+              source: "editorjs-demo"
+            },
+
+            // Field name for file uploads
+            field: "image",
+
+            // Allowed file types
+            types: "image/*"
+          }
+        }
+      },
+
+      // Additional EditorJS configuration for better demo experience
+      autofocus: true,
+      onReady: () => {
+        console.log('🎉 EditorJS Image Tool Demo Ready!');
+        console.log('Available features:');
+        console.log('- Alt text (always visible)');
+        console.log('- Caption (always visible)');
+        console.log('- Border toggle (in settings)');
+        console.log('- Background toggle (in settings)');
+        console.log('- Link toggle (in settings)');
+        console.log('- Size presets (data structure ready)');
+        console.log('- Alignment options (data structure ready)');
+      },
+
+      onChange: (api, event) => {
+        console.log('Content changed:', event);
+      }
+    });
+
+    // Add some helpful console commands for testing
+    window.editor = editor;
+    window.getImageData = async () => {
+      const data = await editor.save();
+      const imageBlocks = data.blocks.filter(block => block.type === 'image');
+      console.table(imageBlocks.map(block => ({
+        caption: block.data.caption,
+        alt: block.data.alt,
+        withBorder: block.data.withBorder,
+        withBackground: block.data.withBackground,
+        withLink: block.data.withLink,
+        size: block.data.size,
+        alignment: block.data.alignment
+      })));
+      return imageBlocks;
+    };
+
+    console.log('🛠️ Demo Helper Commands:');
+    console.log('- window.editor: Access editor instance');
+    console.log('- window.getImageData(): View all image block data in table format');
+  </script>
+</body>
+
 </html>

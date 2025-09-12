@@ -1,4 +1,4 @@
-import { IconPicture } from '@codexteam/icons';
+import { IconPicture, IconText, IconLink } from '@codexteam/icons';
 import { make } from './utils/dom';
 import type { API } from '@editorjs/editorjs';
 import type { ImageConfig } from './types/types';
@@ -56,6 +56,26 @@ interface Nodes {
    * Caption element for the image.
    */
   caption: HTMLElement;
+
+  /**
+   * Link input for making image clickable.
+   */
+  linkInput: HTMLElement;
+
+  /**
+   * Container for text inputs below image.
+   */
+  textInputsContainer: HTMLElement;
+
+  /**
+   * Wrapper for caption input with icon.
+   */
+  captionWrapper: HTMLElement;
+
+  /**
+   * Wrapper for link input with icon.
+   */
+  linkWrapper: HTMLElement;
 }
 
 /**
@@ -124,15 +144,44 @@ export default class Ui {
     this.config = config;
     this.onSelectFile = onSelectFile;
     this.readOnly = readOnly;
+
+    // Create caption wrapper with icon
+    const captionWrapper = make('div', [this.CSS.inputWrapper]);
+    const captionIcon = make('div', [this.CSS.inputIcon]);
+
+    captionIcon.innerHTML = IconText;
+
+    const captionInput = make('div', [this.CSS.input, this.CSS.caption], {
+      contentEditable: !this.readOnly,
+    });
+
+    captionWrapper.appendChild(captionIcon);
+    captionWrapper.appendChild(captionInput);
+
+    // Create link wrapper with icon
+    const linkWrapper = make('div', [this.CSS.inputWrapper]);
+    const linkIcon = make('div', [this.CSS.inputIcon]);
+
+    linkIcon.innerHTML = IconLink;
+
+    const linkInput = make('div', [this.CSS.input, this.CSS.linkInput], {
+      contentEditable: !this.readOnly,
+    });
+
+    linkWrapper.appendChild(linkIcon);
+    linkWrapper.appendChild(linkInput);
+
     this.nodes = {
       wrapper: make('div', [this.CSS.baseClass, this.CSS.wrapper]),
       imageContainer: make('div', [this.CSS.imageContainer]),
       fileButton: this.createFileButton(),
       imageEl: undefined,
       imagePreloader: make('div', this.CSS.imagePreloader),
-      caption: make('div', [this.CSS.input, this.CSS.caption], {
-        contentEditable: !this.readOnly,
-      }),
+      textInputsContainer: make('div', [this.CSS.textInputsContainer]),
+      caption: captionInput,
+      linkInput: linkInput,
+      captionWrapper: captionWrapper,
+      linkWrapper: linkWrapper,
     };
 
     /**
@@ -141,14 +190,28 @@ export default class Ui {
      *    <image-container>
      *      <image-preloader />
      *    </image-container>
-     *    <caption />
+     *    <text-inputs-container>
+     *      <caption-wrapper>
+     *        <caption-icon />
+     *        <caption />
+     *      </caption-wrapper>
+     *      <link-wrapper>
+     *        <link-icon />
+     *        <link-input />
+     *      </link-wrapper>
+     *    </text-inputs-container>
      *    <select-file-button />
      *  </wrapper>
      */
     this.nodes.caption.dataset.placeholder = this.config.captionPlaceholder;
+    this.nodes.linkInput.dataset.placeholder = 'Enter link URL...';
+
     this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
+    this.nodes.textInputsContainer.appendChild(this.nodes.captionWrapper);
+    this.nodes.textInputsContainer.appendChild(this.nodes.linkWrapper);
+
     this.nodes.wrapper.appendChild(this.nodes.imageContainer);
-    this.nodes.wrapper.appendChild(this.nodes.caption);
+    this.nodes.wrapper.appendChild(this.nodes.textInputsContainer);
     this.nodes.wrapper.appendChild(this.nodes.fileButton);
   }
 
@@ -260,6 +323,16 @@ export default class Ui {
   }
 
   /**
+   * Shows link input
+   * @param linkUrl - link URL content
+   */
+  public fillLink(linkUrl: string): void {
+    if (this.nodes.linkInput !== undefined) {
+      this.nodes.linkInput.innerHTML = linkUrl;
+    }
+  }
+
+  /**
    * Changes UI status
    * @param status - see {@link Ui.status} constants
    */
@@ -290,7 +363,11 @@ export default class Ui {
       imageContainer: 'image-tool__image',
       imagePreloader: 'image-tool__image-preloader',
       imageEl: 'image-tool__image-picture',
+      textInputsContainer: 'image-tool__text-inputs',
       caption: 'image-tool__caption',
+      linkInput: 'image-tool__link',
+      inputWrapper: 'image-tool__input-wrapper',
+      inputIcon: 'image-tool__input-icon',
     };
   };
 

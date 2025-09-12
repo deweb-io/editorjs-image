@@ -44,29 +44,77 @@
     }
   }
 
+  &__text-inputs {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  &__input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #e8e8eb;
+    border-radius: 6px;
+    background: #ffffff;
+    margin-bottom: 8px;
+  }
+
+  &__input-icon {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: #8c92ac;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   &__caption {
-    visibility: hidden;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin-bottom: 10px;
+    font-size: 15px;
+    border: none;
+    outline: none;
+    padding: 0;
+    line-height: 1.4;
+    flex: 1;
+    background: transparent;
 
     &[contentEditable="true"][data-placeholder]::before {
-      position: absolute !important;
       content: attr(data-placeholder);
-      color: #707684;
-      font-weight: normal;
-      display: none;
+      color: #a8a8a8;
+      display: block;
     }
 
-    &[contentEditable="true"][data-placeholder]:empty {
-      &::before {
-        display: block;
-      }
+    &[contentEditable="true"][data-placeholder]:not(:empty)::before {
+      display: none;
+    }
+  }
 
-      &:focus::before {
-        display: none;
-      }
+  &__link {
+    visibility: hidden;
+    font-size: 15px;
+    border: none;
+    outline: none;
+    padding: 0;
+    line-height: 1.4;
+    flex: 1;
+    background: transparent;
+
+    &[contentEditable="true"][data-placeholder]::before {
+      content: attr(data-placeholder);
+      color: #a8a8a8;
+      display: block;
+    }
+
+    &[contentEditable="true"][data-placeholder]:not(:empty)::before {
+      display: none;
     }
   }
 
@@ -164,6 +212,73 @@
     }
 
     padding-bottom: 50px
+  }
+
+  &--link {
+    ^&__link {
+      visibility: visible;
+    }
+  }
+
+  /**
+   * Size options
+   * ----------------
+   */
+
+  &--size-small {
+    ^&__image {
+      &-picture {
+        max-width: 25%;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  &--size-medium {
+    ^&__image {
+      &-picture {
+        max-width: 50%;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  &--size-full {
+    ^&__image {
+      &-picture {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+  }
+
+  /**
+   * Alignment options
+   * ----------------
+   */
+
+  &--alignment-left {
+    ^&__image {
+      &-picture {
+        margin: 0 auto 0 0;
+      }
+    }
+  }
+
+  &--alignment-center {
+    ^&__image {
+      &-picture {
+        margin: 0 auto;
+      }
+    }
+  }
+
+  &--alignment-right {
+    ^&__image {
+      &-picture {
+        margin: 0 0 0 auto;
+      }
+    }
   }
 }
 

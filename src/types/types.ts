@@ -84,9 +84,19 @@ export type ImageToolData<Actions = {}, AdditionalFileData = {}> = {
   withBackground: boolean;
 
   /**
-   * Flag indicating whether the image is stretched.
+   * Image size preset: small, medium, large, or full width
    */
-  stretched: boolean;
+  size: 'small' | 'medium' | 'large' | 'full';
+
+  /**
+   * Image alignment: left, center, or right
+   */
+  alignment: 'left' | 'center' | 'right';
+
+  /**
+   * URL for the image link. Empty string means no link.
+   */
+  linkUrl: string;
 
   /**
    * Object containing the URL of the image file.
@@ -158,6 +168,11 @@ export interface ImageConfig {
    * Placeholder text for the caption field.
    */
   captionPlaceholder?: string;
+
+  /**
+   * Placeholder text for the alt text field.
+   */
+  altPlaceholder?: string;
 
   /**
    * Additional data to send with requests.

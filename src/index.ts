@@ -35,7 +35,7 @@ import './index.css';
 import Ui from './ui';
 import Uploader from './uploader';
 
-import { IconAddBorder, IconStretch, IconAddBackground, IconPicture, IconText } from '@codexteam/icons';
+import { IconAddBorder, IconAddBackground, IconPicture, IconText, IconLink } from '@codexteam/icons';
 import type { ActionConfig, UploadResponseFormat, ImageToolData, ImageConfig, HTMLPasteEventDetailExtended, ImageSetterParam, FeaturesConfig } from './types/types';
 
 type ImageToolConstructorOptions = BlockToolConstructorOptions<ImageToolData, ImageConfig>;
@@ -142,7 +142,9 @@ export default class ImageTool implements BlockTool {
       caption: '',
       withBorder: false,
       withBackground: false,
-      stretched: false,
+      size: 'full',
+      alignment: 'center',
+      linkUrl: '',
       file: {
         url: '',
       },
@@ -181,15 +183,15 @@ export default class ImageTool implements BlockTool {
         toggle: true,
       },
       {
-        name: 'stretched',
-        icon: IconStretch,
-        title: 'Stretch image',
-        toggle: true,
-      },
-      {
         name: 'withBackground',
         icon: IconAddBackground,
         title: 'With background',
+        toggle: true,
+      },
+      {
+        name: 'linkUrl',
+        icon: IconLink,
+        title: 'With Link',
         toggle: true,
       },
     ];
@@ -221,8 +223,10 @@ export default class ImageTool implements BlockTool {
    */
   public save(): ImageToolData {
     const caption = this.ui.nodes.caption;
+    const linkInput = this.ui.nodes.linkInput;
 
     this._data.caption = caption.innerHTML;
+    this._data.linkUrl = linkInput.innerHTML;
 
     return this.data;
   }
@@ -232,13 +236,24 @@ export default class ImageTool implements BlockTool {
    * @returns TunesMenuConfig
    */
   public renderSettings(): TunesMenuConfig {
+    // Professional SVG icons for sizes
+    const sizeSmallIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="4" y="4" width="8" height="8" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
+    const sizeMediumIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
+    const sizeFullIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="0.5" width="15" height="15" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M0.5 0.5L4 4M15.5 0.5L12 4M0.5 15.5L4 12M15.5 15.5L12 12" stroke="currentColor" stroke-width="1.5"/></svg>';
+    const sizeIcon = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="3" cy="3" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="11" cy="3" r="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="3" cy="11" r="1" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>';
+
+    // Professional SVG icons for alignment
+    const alignLeftIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12v2H2V3zm0 4h8v2H2V7zm0 4h10v2H2v-2z" fill="currentColor"/></svg>';
+    const alignCenterIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12v2H2V3zm2 4h8v2H4V7zm1 4h6v2H5v-2z" fill="currentColor"/></svg>';
+    const alignRightIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12v2H2V3zm4 4h8v2H6V7zm2 4h6v2H8v-2z" fill="currentColor"/></svg>';
+    const alignIcon = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 2h12v2H1V2zm2 3h8v2H3V5zm0 3h8v2H3V8zm-2 3h12v2H1v-2z" fill="currentColor"/></svg>';
+
     // Merge default tunes with the ones that might be added by user
     // @see https://github.com/editor-js/image/pull/49
     const tunes = ImageTool.tunes.concat(this.config.actions || []);
     const featureTuneMap: Record<string, string> = {
       border: 'withBorder',
       background: 'withBackground',
-      stretch: 'stretched',
       caption: 'caption',
     };
 
@@ -266,21 +281,63 @@ export default class ImageTool implements BlockTool {
      * @param tune - tune to check
      */
     const isActive = (tune: ActionConfig): boolean => {
-      let currentState = this.data[tune.name as keyof ImageToolData] as boolean;
-
       if (tune.name === 'caption') {
-        currentState = this.isCaptionEnabled ?? currentState;
+        return this.isCaptionEnabled ?? (this.data[tune.name as keyof ImageToolData] as boolean);
       }
 
-      return currentState;
+      if (tune.name === 'linkUrl') {
+        return !!this.data.linkUrl;
+      }
+
+      return this.data[tune.name as keyof ImageToolData] as boolean;
     };
 
-    return availableTunes.map(tune => ({
+    /**
+     * Check if the size option is active
+     * @param sizeName - name of the size option
+     */
+    const isSizeActive = (sizeName: string): boolean => {
+      const size = sizeName.replace('size-', '');
+
+      return this.data.size === size;
+    };
+
+    /**
+     * Check if the alignment option is active
+     * @param alignmentName - name of the alignment option
+     */
+    const isAlignmentActive = (alignmentName: string): boolean => {
+      const alignment = alignmentName.replace('alignment-', '');
+
+      return this.data.alignment === alignment;
+    };
+
+    const tuneItems = availableTunes.map(tune => ({
       icon: tune.icon,
-      label: this.api.i18n.t(tune.title),
-      name: tune.name,
+      title: this.api.i18n.t(tune.title),
       toggle: tune.toggle,
       isActive: isActive(tune),
+      hint: tune.name === 'withBorder'
+        ? {
+          title: 'Border Style',
+          description: 'Add a decorative border around the image',
+        }
+        : tune.name === 'withBackground'
+          ? {
+            title: 'Background Style',
+            description: 'Add a colored background behind the image',
+          }
+          : tune.name === 'linkUrl'
+            ? {
+              title: 'Link Settings',
+              description: 'Make image clickable - edit URL in input field below caption',
+            }
+            : tune.name === 'caption'
+              ? {
+                title: 'Caption Display',
+                description: 'Show or hide the caption text below the image',
+              }
+              : undefined,
       onActivate: () => {
         /** If it'a user defined tune, execute it's callback stored in action property */
         if (typeof tune.action === 'function') {
@@ -302,6 +359,94 @@ export default class ImageTool implements BlockTool {
         this.tuneToggled(tune.name as keyof ImageToolData, newState);
       },
     }));
+
+    // Create size menu item with children
+    const sizeMenuItem = {
+      icon: sizeIcon,
+      title: 'Size',
+      children: {
+        items: [
+          {
+            icon: sizeSmallIcon,
+            title: 'Small',
+            toggle: 'size-group',
+            isActive: isSizeActive('size-small'),
+            onActivate: () => {
+              this._data.size = 'small';
+              this.ui.applyTune('size', true);
+            },
+          },
+          {
+            icon: sizeMediumIcon,
+            title: 'Medium',
+            toggle: 'size-group',
+            isActive: isSizeActive('size-medium'),
+            onActivate: () => {
+              this._data.size = 'medium';
+              this.ui.applyTune('size', true);
+            },
+          },
+          {
+            icon: sizeFullIcon,
+            title: 'Full width',
+            toggle: 'size-group',
+            isActive: isSizeActive('size-full'),
+            onActivate: () => {
+              this._data.size = 'full';
+              this.ui.applyTune('size', true);
+            },
+          },
+        ],
+      },
+    };
+
+    // Create alignment menu item with children
+    const alignmentMenuItem = {
+      icon: alignIcon,
+      title: 'Alignment',
+      children: {
+        items: [
+          {
+            icon: alignLeftIcon,
+            title: 'Left',
+            toggle: 'alignment-group',
+            isActive: isAlignmentActive('alignment-left'),
+            onActivate: () => {
+              this._data.alignment = 'left';
+              this.ui.applyTune('alignment', true);
+            },
+          },
+          {
+            icon: alignCenterIcon,
+            title: 'Center',
+            toggle: 'alignment-group',
+            isActive: isAlignmentActive('alignment-center'),
+            onActivate: () => {
+              this._data.alignment = 'center';
+              this.ui.applyTune('alignment', true);
+            },
+          },
+          {
+            icon: alignRightIcon,
+            title: 'Right',
+            toggle: 'alignment-group',
+            isActive: isAlignmentActive('alignment-right'),
+            onActivate: () => {
+              this._data.alignment = 'right';
+              this.ui.applyTune('alignment', true);
+            },
+          },
+        ],
+      },
+    };
+
+    // Add separator and size/alignment menu items
+    return [
+      ...tuneItems,
+      { type: 'separator' },
+      sizeMenuItem,
+      alignmentMenuItem,
+    ];
   }
 
   /**
@@ -394,7 +539,10 @@ export default class ImageTool implements BlockTool {
     this.image = data.file;
 
     this._data.caption = data.caption || '';
+    this._data.linkUrl = data.linkUrl || '';
+
     this.ui.fillCaption(this._data.caption);
+    this.ui.fillLink(this._data.linkUrl);
 
     ImageTool.tunes.forEach(({ name: tune }) => {
       const value = typeof data[tune as keyof ImageToolData] !== 'undefined' ? data[tune as keyof ImageToolData] === true || data[tune as keyof ImageToolData] === 'true' : false;
@@ -406,6 +554,10 @@ export default class ImageTool implements BlockTool {
       this.setTune('caption', true);
     } else if (this.config.features?.caption === true) {
       this.setTune('caption', true);
+    }
+
+    if (data.linkUrl) {
+      this.ui.applyTune('link', true);
     }
   }
 
@@ -467,6 +619,13 @@ export default class ImageTool implements BlockTool {
         this._data.caption = '';
         this.ui.fillCaption('');
       }
+    } else if (tuneName === 'linkUrl') {
+      this.ui.applyTune('link', state);
+
+      if (state == false) {
+        this._data.linkUrl = '';
+        this.ui.fillLink('');
+      }
     } else {
       /**
        * Inverse tune state
@@ -484,17 +643,6 @@ export default class ImageTool implements BlockTool {
     (this._data[tuneName] as boolean) = value;
 
     this.ui.applyTune(tuneName, value);
-    if (tuneName === 'stretched') {
-      /**
-       * Wait until the API is ready
-       */
-      Promise.resolve().then(() => {
-        this.block.stretched = value;
-      })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
   }
 
   /**
