@@ -61,8 +61,20 @@
 
 <body>
   <div class="demo-header">
-    <h1>🖼️ EditorJS Image Tool - All Features Demo</h1>
-    <p>Test all image tool capabilities including alt text, captions, styling options, and more!</p>
+    <h1>🖼️ EditorJS Image Tool - Enhanced Features Demo</h1>
+    <p>Test all image tool capabilities including captions, links, size presets, alignment options, and styling features!</p>
+  </div>
+
+  <div class="feature-info">
+    <h3>🆕 New Features Available:</h3>
+    <ul>
+      <li><strong>Link functionality</strong> - Make images clickable with custom URLs</li>
+      <li><strong>Size presets</strong> - Small (30%), Medium (60%), Full width (100%)</li>
+      <li><strong>Alignment options</strong> - Left, Center, Right alignment</li>
+      <li><strong>Enhanced UI</strong> - Smooth transitions and modern styling</li>
+      <li><strong>Organized menus</strong> - Size, Alignment, and Style submenus</li>
+      <li><strong>Caption toggle</strong> - Show/hide caption as needed</li>
+    </ul>
   </div>
 
   <div id="editorjs"></div>
@@ -81,7 +93,7 @@
             id: "demo-text-1",
             type: "paragraph",
             data: {
-              text: "🎨 <b>Image Tool Demo</b> - Click on the image to access settings menu with border, background, and link options. Test all features like alt text, captions, and styling toggles."
+              text: "🎨 <b>Enhanced Image Tool Demo</b> - Click on the image below to access the settings menu and test all the new features including size presets, alignment options, caption toggle, link functionality, and styling controls."
             }
           },
           {
@@ -97,7 +109,7 @@
             id: "demo-text-2",
             type: "paragraph",
             data: {
-              text: "🆕 <b>Add More Images</b> - Use the + button in the toolbar to add new image blocks. You can upload files, paste URLs, or drag and drop images directly!"
+              text: "🆕 <b>Add More Images</b> - Use the + button in the toolbar to add new image blocks. Upload files, paste URLs, or drag and drop images directly to test all features!"
             }
           }
         ]
@@ -112,25 +124,6 @@
               byUrl: "http://localhost:8008/fetchUrl"
             },
 
-            // Enable all features for comprehensive testing
-            features: {
-              caption: "optional",  // Users can toggle caption visibility
-              border: true,         // Enable border toggle
-              background: true,     // Enable background toggle
-              link: true           // Enable link functionality
-            },
-
-            // Custom placeholders for better UX
-            captionPlaceholder: "Enter image caption...",
-
-            // Custom button content
-            buttonContent: "📁 Select an image file",
-
-            // Additional request data for uploads (if needed)
-            additionalRequestData: {
-              source: "editorjs-demo"
-            },
-
             // Field name for file uploads
             field: "image",
 
@@ -143,15 +136,16 @@
       // Additional EditorJS configuration for better demo experience
       autofocus: true,
       onReady: () => {
-        console.log('🎉 EditorJS Image Tool Demo Ready!');
-        console.log('Available features:');
-        console.log('- Alt text (always visible)');
-        console.log('- Caption (always visible)');
-        console.log('- Border toggle (in settings)');
-        console.log('- Background toggle (in settings)');
-        console.log('- Link toggle (in settings)');
-        console.log('- Size presets (data structure ready)');
-        console.log('- Alignment options (data structure ready)');
+        console.log('🎉 EditorJS Enhanced Image Tool Demo Ready!');
+        console.log('✨ Available features:');
+        console.log('- 📝 Caption input (toggleable)');
+        console.log('- 🔗 Link functionality (toggleable)');
+        console.log('- 🖼️ Border styling (in Style submenu)');
+        console.log('- 🎨 Background styling (in Style submenu)');
+        console.log('- 📏 Size presets: Small (30%), Medium (60%), Full (100%)');
+        console.log('- ↔️ Alignment options: Left, Center, Right');
+        console.log('- ✨ Smooth transitions and modern UI');
+        console.log('- 📁 Organized settings with nested submenus');
       },
 
       onChange: (api, event) => {
@@ -166,19 +160,19 @@
       const imageBlocks = data.blocks.filter(block => block.type === 'image');
       console.table(imageBlocks.map(block => ({
         caption: block.data.caption,
-        alt: block.data.alt,
+        linkUrl: block.data.linkUrl,
         withBorder: block.data.withBorder,
         withBackground: block.data.withBackground,
-        withLink: block.data.withLink,
         size: block.data.size,
-        alignment: block.data.alignment
+        alignment: block.data.alignment,
+        url: block.data.file.url.substring(0, 50) + '...'
       })));
       return imageBlocks;
     };
 
-    console.log('🛠️ Demo Helper Commands:');
+    console.log('🛠️ Enhanced Demo Helper Commands:');
     console.log('- window.editor: Access editor instance');
-    console.log('- window.getImageData(): View all image block data in table format');
+    console.log('- window.getImageData(): View all image block data with new fields in table format');
   </script>
 </body>
 

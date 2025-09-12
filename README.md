@@ -14,6 +14,11 @@ Image Block for the [Editor.js](https://editorjs.io).
 - Pasting files and screenshots from Clipboard
 - Allows adding a border, a background and a caption
 - Allows stretching an image to the container's full-width
+- **NEW**: Link functionality - make images clickable with custom URLs
+- **NEW**: Size presets - Small, Medium, and Full width options
+- **NEW**: Alignment options - Left, Center, and Right alignment
+- **NEW**: Enhanced UI with smooth transitions and modern styling
+- **NEW**: Improved menu organization with nested submenus
 
 **Notes**
 
@@ -80,6 +85,7 @@ Image Tool supports these configuration parameters:
 | additionalRequestData | `object` | Object with any data you want to send with uploading requests |
 | additionalRequestHeaders | `object` | Object with any custom headers which will be added to request. [See example](https://github.com/codex-team/ajax/blob/e5bc2a2391a18574c88b7ecd6508c29974c3e27f/README.md#headers-object) |
 | captionPlaceholder | `string` | (default: `Caption`) Placeholder for Caption input |
+| linkPlaceholder | `string` | (default: `Add link URL`) Placeholder for Link input |
 | buttonContent | `string` | Allows to override HTML content of «Select file» button |
 | uploader | `{{uploadByFile: function, uploadByUrl: function}}` | Optional custom uploading methods. See details below. |
 | actions | `array` | Array with custom actions to show in the tool's settings menu. See details below. |
@@ -91,13 +97,23 @@ Note that if you don't implement your custom uploader methods, the `endpoints` p
 
 ![](https://capella.pics/c74cdeec-3405-48ac-a960-f784188cf9b4.jpg)
 
-1. Add border
+**Main Settings:**
+1. **With caption** - Toggle caption input visibility
+2. **With Link** - Toggle link input visibility (makes image clickable)
 
-2. Stretch to full-width
+**Size submenu:**
+3. **Small** - 30% width
+4. **Medium** - 60% width  
+5. **Full width** - 100% width
 
-3. Add background
+**Alignment submenu:**
+6. **Left** - Align image to the left
+7. **Center** - Center the image
+8. **Right** - Align image to the right
 
-4. Add caption
+**Style submenu:**
+9. **Border** - Add border around image
+10. **Background** - Add colored background behind image
 
 Add extra setting-buttons by adding them to the `actions`-array in the configuration:
 ```js
@@ -120,8 +136,8 @@ You can disable features such as border, background tunes and caption by definin
 ```js
 features: {
   border: false,
-  caption: 'optional',
-  stretch: false
+  caption: 'optional', // Set to 'optional' to show caption as toggle, true/false to force show/hide
+  background: false
 }
 ```
 
@@ -135,9 +151,12 @@ This Tool returns `data` with following format
 | -------------- | --------- | ------------------------------- |
 | file           | `object`  | Uploaded file data. Any data got from backend uploader. Always contain the `url` property |
 | caption        | `string`  | image's caption                 |
+| linkUrl        | `string`  | URL to make image clickable     |
 | withBorder     | `boolean` | add border to image             |
 | withBackground | `boolean` | need to add background          |
 | stretched      | `boolean` | stretch image to screen's width |
+| size           | `string`  | size preset: 'small', 'medium', or 'full' |
+| alignment      | `string`  | alignment: 'left', 'center', or 'right' |
 
 
 ```json
@@ -148,9 +167,12 @@ This Tool returns `data` with following format
             "url" : "https://www.tesla.com/tesla_theme/assets/img/_vehicle_redesign/roadster_and_semi/roadster/hero.jpg"
         },
         "caption" : "Roadster // tesla.com",
+        "linkUrl" : "https://tesla.com/roadster",
         "withBorder" : false,
         "withBackground" : false,
         "stretched" : true,
+        "size" : "full",
+        "alignment" : "center"
     }
 }
 ```

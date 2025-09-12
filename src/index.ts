@@ -38,7 +38,7 @@ import Uploader from './uploader';
 // Tabler icons as SVG strings
 const tablerIcons = {
   photo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 2 5 5v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="m14.5 12.5-3-3a2 2 0 0 0-3 0l-2 2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L8 19"/></svg>',
-  typography: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V7a1 1 0 0 1 1-1h2.5a1 1 0 0 1 1 1v13M4 20h6M4 20v-4h6v4"/><path d="M15 8V6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/><path d="M15 12h4l-2 8z"/></svg>',
+  message: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
   link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
   palette: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
   border: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/><path d="M4 6V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>',
@@ -232,6 +232,15 @@ export default class ImageTool implements BlockTool {
       this.ui.applyTune('caption', true);
     }
 
+    // Initialize link as disabled by default unless there's existing data
+    if (this.data.linkUrl) {
+      this.isLinkEnabled = true;
+      this.ui.applyTune('link', true);
+    } else {
+      this.isLinkEnabled = false;
+      this.ui.applyTune('link', false);
+    }
+
     // Apply initial size and alignment from data
     if (this.data.size) {
       this.ui.applySize(this.data.size);
@@ -279,10 +288,11 @@ export default class ImageTool implements BlockTool {
       caption: 'caption',
     };
 
-    if (this.config.features?.caption === 'optional') {
+    // Add caption tune to main menu if captions are enabled (default behavior)
+    if (this.config.features?.caption !== false) {
       tunes.push({
         name: 'caption',
-        icon: tablerIcons.typography,
+        icon: tablerIcons.message,
         title: 'With caption',
         toggle: true,
       });
@@ -308,7 +318,7 @@ export default class ImageTool implements BlockTool {
       }
 
       if (tune.name === 'linkUrl') {
-        return this.isLinkEnabled ?? true; // Default to enabled
+        return this.isLinkEnabled ?? false; // Default to disabled
       }
 
       return this.data[tune.name as keyof ImageToolData] as boolean;
@@ -346,14 +356,14 @@ export default class ImageTool implements BlockTool {
       isActive: isActive(tune),
       hint: tune.name === 'linkUrl'
         ? {
-          title: 'Link Settings',
-          description: 'Make image clickable - edit URL in input field below caption',
-        }
+            title: 'Link Settings',
+            description: 'Make image clickable - edit URL in input field below caption',
+          }
         : tune.name === 'caption'
           ? {
-            title: 'Caption Display',
-            description: 'Show or hide the caption text below the image',
-          }
+              title: 'Caption Display',
+              description: 'Show or hide the caption text below the image',
+            }
           : undefined,
       onActivate: () => {
         /** If it'a user defined tune, execute it's callback stored in action property */
@@ -371,6 +381,15 @@ export default class ImageTool implements BlockTool {
         if (tune.name === 'caption') {
           this.isCaptionEnabled = !(this.isCaptionEnabled ?? false);
           newState = this.isCaptionEnabled;
+        }
+
+        /**
+         * For the linkUrl tune, we can't rely on the this._data
+         * because it can be manualy toggled by user
+         */
+        if (tune.name === 'linkUrl') {
+          this.isLinkEnabled = !(this.isLinkEnabled ?? false);
+          newState = this.isLinkEnabled;
         }
 
         this.tuneToggled(tune.name as keyof ImageToolData, newState);
@@ -678,7 +697,7 @@ export default class ImageTool implements BlockTool {
   private tuneToggled(tuneName: keyof ImageToolData, state: boolean): void {
     if (tuneName === 'caption') {
       this.isCaptionEnabled = state;
-      this.ui.applyTune(tuneName, state);
+      // Don't call applyTune for caption as it doesn't need CSS classes
       this.ui.toggleCaptionInput(state); // Toggle caption input visibility
 
       if (state == false) {

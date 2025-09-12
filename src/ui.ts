@@ -1,7 +1,7 @@
 // Tabler icons as SVG strings
 const tablerIcons = {
   photo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 2 5 5v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="m14.5 12.5-3-3a2 2 0 0 0-3 0l-2 2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L8 19"/></svg>',
-  typography: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V7a1 1 0 0 1 1-1h2.5a1 1 0 0 1 1 1v13M4 20h6M4 20v-4h6v4"/><path d="M15 8V6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/><path d="M15 12h4l-2 8z"/></svg>',
+  message: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
   link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
 };
 
@@ -348,30 +348,30 @@ export default class Ui {
   }
 
   /**
-   * Toggles link input visibility
+   * Toggles link input visibility using CSS classes
    * @param show - whether to show or hide the link input
    */
   public toggleLinkInput(show: boolean): void {
-    if (this.nodes.linkInput !== undefined) {
-      this.nodes.linkInput.style.display = show ? 'block' : 'none';
-      if (show) {
-        // Add autofocus when showing the input
-        setTimeout(() => this.nodes.linkInput?.focus(), autofocusDelay);
-      }
+    // Apply the link tune which will show/hide via CSS
+    this.applyTune('link', show);
+    
+    if (show && this.nodes.linkInput !== undefined) {
+      // Add autofocus when showing the input
+      setTimeout(() => this.nodes.linkInput?.focus(), autofocusDelay);
     }
   }
 
   /**
-   * Toggles caption input visibility
+   * Toggles caption input visibility using CSS classes
    * @param show - whether to show or hide the caption input
    */
   public toggleCaptionInput(show: boolean): void {
-    if (this.nodes.caption !== undefined) {
-      this.nodes.caption.style.display = show ? 'block' : 'none';
-      if (show) {
-        // Add autofocus when showing the input
-        setTimeout(() => this.nodes.caption?.focus(), autofocusDelay);
-      }
+    // Use CSS class to control visibility
+    this.nodes.wrapper.classList.toggle(`${this.CSS.wrapper}--caption-hidden`, !show);
+    
+    if (show && this.nodes.caption !== undefined) {
+      // Add autofocus when showing the input
+      setTimeout(() => this.nodes.caption?.focus(), autofocusDelay);
     }
   }
 
