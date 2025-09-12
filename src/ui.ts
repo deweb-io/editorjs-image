@@ -1,9 +1,14 @@
 // Tabler icons as SVG strings
 const tablerIcons = {
   photo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 2 5 5v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="m14.5 12.5-3-3a2 2 0 0 0-3 0l-2 2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L8 19"/></svg>',
-  text: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></svg>',
+  typography: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V7a1 1 0 0 1 1-1h2.5a1 1 0 0 1 1 1v13M4 20h6M4 20v-4h6v4"/><path d="M15 8V6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/><path d="M15 12h4l-2 8z"/></svg>',
   link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
 };
+
+/**
+ * Autofocus delay in milliseconds
+ */
+const autofocusDelay = 100;
 
 import { make } from './utils/dom';
 import type { API } from '@editorjs/editorjs';
@@ -141,15 +146,14 @@ export default class Ui {
     this.onSelectFile = onSelectFile;
     this.readOnly = readOnly;
 
-    // Create simplified caption input
+    // Create simplified caption input (visible by default)
     const captionInput = make('div', [this.CSS.input, this.CSS.caption], {
       contentEditable: !this.readOnly,
     });
 
-    // Create simplified link input (hidden by default)
+    // Create simplified link input (visible by default)
     const linkInput = make('div', [this.CSS.input, this.CSS.linkInput], {
       contentEditable: !this.readOnly,
-      style: 'display: none;', // Hidden by default, shown when toggled in menu
     });
 
     this.nodes = {
@@ -318,6 +322,24 @@ export default class Ui {
   public toggleLinkInput(show: boolean): void {
     if (this.nodes.linkInput !== undefined) {
       this.nodes.linkInput.style.display = show ? 'block' : 'none';
+      if (show) {
+        // Add autofocus when showing the input
+        setTimeout(() => this.nodes.linkInput?.focus(), autofocusDelay);
+      }
+    }
+  }
+
+  /**
+   * Toggles caption input visibility
+   * @param show - whether to show or hide the caption input
+   */
+  public toggleCaptionInput(show: boolean): void {
+    if (this.nodes.caption !== undefined) {
+      this.nodes.caption.style.display = show ? 'block' : 'none';
+      if (show) {
+        // Add autofocus when showing the input
+        setTimeout(() => this.nodes.caption?.focus(), autofocusDelay);
+      }
     }
   }
 
