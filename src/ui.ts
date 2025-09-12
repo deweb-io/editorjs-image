@@ -208,6 +208,38 @@ export default class Ui {
   }
 
   /**
+   * Apply size class to the wrapper, removing any existing size classes
+   * @param size - size option (small, medium, full)
+   */
+  public applySize(size: string): void {
+    // Remove any existing size classes
+    this.nodes.wrapper.classList.remove(
+      `${this.CSS.wrapper}--size-small`,
+      `${this.CSS.wrapper}--size-medium`,
+      `${this.CSS.wrapper}--size-full`
+    );
+
+    // Apply the new size class
+    this.nodes.wrapper.classList.add(`${this.CSS.wrapper}--size-${size}`);
+  }
+
+  /**
+   * Apply alignment class to the wrapper, removing any existing alignment classes
+   * @param alignment - alignment option (left, center, right)
+   */
+  public applyAlignment(alignment: string): void {
+    // Remove any existing alignment classes
+    this.nodes.wrapper.classList.remove(
+      `${this.CSS.wrapper}--alignment-left`,
+      `${this.CSS.wrapper}--alignment-center`,
+      `${this.CSS.wrapper}--alignment-right`
+    );
+
+    // Apply the new alignment class
+    this.nodes.wrapper.classList.add(`${this.CSS.wrapper}--alignment-${alignment}`);
+  }
+
+  /**
    * Renders tool UI
    */
   public render(): HTMLElement {

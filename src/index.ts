@@ -232,6 +232,14 @@ export default class ImageTool implements BlockTool {
       this.ui.applyTune('caption', true);
     }
 
+    // Apply initial size and alignment from data
+    if (this.data.size) {
+      this.ui.applySize(this.data.size);
+    }
+    if (this.data.alignment) {
+      this.ui.applyAlignment(this.data.alignment);
+    }
+
     return this.ui.render() as HTMLDivElement;
   }
 
@@ -338,14 +346,14 @@ export default class ImageTool implements BlockTool {
       isActive: isActive(tune),
       hint: tune.name === 'linkUrl'
         ? {
-            title: 'Link Settings',
-            description: 'Make image clickable - edit URL in input field below caption',
-          }
+          title: 'Link Settings',
+          description: 'Make image clickable - edit URL in input field below caption',
+        }
         : tune.name === 'caption'
           ? {
-              title: 'Caption Display',
-              description: 'Show or hide the caption text below the image',
-            }
+            title: 'Caption Display',
+            description: 'Show or hide the caption text below the image',
+          }
           : undefined,
       onActivate: () => {
         /** If it'a user defined tune, execute it's callback stored in action property */
@@ -382,7 +390,7 @@ export default class ImageTool implements BlockTool {
             isActive: isSizeActive('size-small'),
             onActivate: () => {
               this._data.size = 'small';
-              this.ui.applyTune('size', true);
+              this.ui.applySize('small');
             },
           },
           {
@@ -392,7 +400,7 @@ export default class ImageTool implements BlockTool {
             isActive: isSizeActive('size-medium'),
             onActivate: () => {
               this._data.size = 'medium';
-              this.ui.applyTune('size', true);
+              this.ui.applySize('medium');
             },
           },
           {
@@ -402,7 +410,7 @@ export default class ImageTool implements BlockTool {
             isActive: isSizeActive('size-full'),
             onActivate: () => {
               this._data.size = 'full';
-              this.ui.applyTune('size', true);
+              this.ui.applySize('full');
             },
           },
         ],
@@ -422,7 +430,7 @@ export default class ImageTool implements BlockTool {
             isActive: isAlignmentActive('alignment-left'),
             onActivate: () => {
               this._data.alignment = 'left';
-              this.ui.applyTune('alignment', true);
+              this.ui.applyAlignment('left');
             },
           },
           {
@@ -432,7 +440,7 @@ export default class ImageTool implements BlockTool {
             isActive: isAlignmentActive('alignment-center'),
             onActivate: () => {
               this._data.alignment = 'center';
-              this.ui.applyTune('alignment', true);
+              this.ui.applyAlignment('center');
             },
           },
           {
@@ -442,7 +450,7 @@ export default class ImageTool implements BlockTool {
             isActive: isAlignmentActive('alignment-right'),
             onActivate: () => {
               this._data.alignment = 'right';
-              this.ui.applyTune('alignment', true);
+              this.ui.applyAlignment('right');
             },
           },
         ],
@@ -590,9 +598,15 @@ export default class ImageTool implements BlockTool {
 
     this._data.caption = data.caption || '';
     this._data.linkUrl = data.linkUrl || '';
+    this._data.size = data.size || 'full';
+    this._data.alignment = data.alignment || 'center';
 
     this.ui.fillCaption(this._data.caption);
     this.ui.fillLink(this._data.linkUrl);
+
+    // Apply size and alignment classes
+    this.ui.applySize(this._data.size);
+    this.ui.applyAlignment(this._data.alignment);
 
     ImageTool.tunes.forEach(({ name: tune }) => {
       const value = typeof data[tune as keyof ImageToolData] !== 'undefined' ? data[tune as keyof ImageToolData] === true || data[tune as keyof ImageToolData] === 'true' : false;
