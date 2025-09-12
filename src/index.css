@@ -6,9 +6,9 @@
   --transition-easing: ease-in-out;
 
   &__image {
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
     padding-bottom: 0;
     transition: all var(--transition-duration) var(--transition-easing);
 
@@ -57,23 +57,14 @@
 
   &__caption {
     font-size: 14px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    outline: none;
-    padding: 8px 12px;
-    line-height: 1.4;
-    min-height: 20px;
     transition: all var(--transition-duration) var(--transition-easing);
-    background: #fafafa;
 
     &:hover {
       border-color: var(--front-color);
-      background: #fff;
     }
 
     &:focus {
       border-color: var(--front-color);
-      background: #fff;
       box-shadow: 0 0 0 3px rgba(56, 138, 229, 0.1);
     }
 
@@ -91,23 +82,14 @@
 
   &__link {
     font-size: 14px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    outline: none;
-    padding: 8px 12px;
-    line-height: 1.4;
-    min-height: 20px;
     transition: all var(--transition-duration) var(--transition-easing);
-    background: #fafafa;
 
     &:hover {
       border-color: var(--front-color);
-      background: #fff;
     }
 
     &:focus {
       border-color: var(--front-color);
-      background: #fff;
       box-shadow: 0 0 0 3px rgba(56, 138, 229, 0.1);
     }
 
@@ -149,22 +131,26 @@
    * ----------------
    */
   .image-tool__link {
-    display: none; /* Hidden by default */
+    display: none;
+    /* Hidden by default */
   }
 
   &--link {
     .image-tool__link {
-      display: block; /* Only show when link is enabled */
+      display: block;
+      /* Only show when link is enabled */
     }
   }
 
   .image-tool__caption {
-    display: block; /* Visible by default */
+    display: block;
+    /* Visible by default */
   }
 
   &--caption-hidden {
     .image-tool__caption {
-      display: none; /* Hide when caption is disabled */
+      display: none;
+      /* Hide when caption is disabled */
     }
   }
 

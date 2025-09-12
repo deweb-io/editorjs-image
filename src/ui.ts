@@ -187,7 +187,7 @@ export default class Ui {
      *  </wrapper>
      */
     this.nodes.caption.dataset.placeholder = this.config.captionPlaceholder;
-    this.nodes.linkInput.dataset.placeholder = 'Enter link URL...';
+    this.nodes.linkInput.dataset.placeholder = 'Enter a link URL...';
 
     this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
     this.nodes.textInputsContainer.appendChild(this.nodes.caption);
@@ -354,7 +354,7 @@ export default class Ui {
   public toggleLinkInput(show: boolean): void {
     // Apply the link tune which will show/hide via CSS
     this.applyTune('link', show);
-    
+
     if (show && this.nodes.linkInput !== undefined) {
       // Add autofocus when showing the input
       setTimeout(() => this.nodes.linkInput?.focus(), autofocusDelay);
@@ -368,7 +368,7 @@ export default class Ui {
   public toggleCaptionInput(show: boolean): void {
     // Use CSS class to control visibility
     this.nodes.wrapper.classList.toggle(`${this.CSS.wrapper}--caption-hidden`, !show);
-    
+
     if (show && this.nodes.caption !== undefined) {
       // Add autofocus when showing the input
       setTimeout(() => this.nodes.caption?.focus(), autofocusDelay);

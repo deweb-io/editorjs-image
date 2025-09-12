@@ -13,18 +13,19 @@ Image Block for the [Editor.js](https://editorjs.io).
 - Pasting images by drag-n-drop
 - Pasting files and screenshots from Clipboard
 - Allows adding a border, a background and a caption
-- Allows stretching an image to the container's full-width
 - **NEW**: Link functionality - make images clickable with custom URLs
-- **NEW**: Size presets - Small, Medium, and Full width options
+- **NEW**: Size presets - Small (30%), Medium (60%), and Full width (100%) options
 - **NEW**: Alignment options - Left, Center, and Right alignment
 - **NEW**: Enhanced UI with smooth transitions and modern styling
-- **NEW**: Improved menu organization with nested submenus
+- **NEW**: Improved menu organization with nested submenus for better UX
 
 **Notes**
 
 This Tool requires server-side implementation for the file uploading. See [backend response format](#server-format) for more details.
 
 This Tool is also capable of uploading & displaying video files using the `<video>` element. To enable this, specify video mime-types via the 'types' config param.
+
+**Compatibility**: This enhanced version maintains full backward compatibility with existing configurations and custom uploaders.
 
 
 ## Installation
@@ -89,7 +90,7 @@ Image Tool supports these configuration parameters:
 | buttonContent | `string` | Allows to override HTML content of «Select file» button |
 | uploader | `{{uploadByFile: function, uploadByUrl: function}}` | Optional custom uploading methods. See details below. |
 | actions | `array` | Array with custom actions to show in the tool's settings menu. See details below. |
-| features | `object` | Allows you to enable/disable additional features such as border, background tunes and caption. See details below. |
+| features | `object` | Allows you to enable/disable additional features such as border, background, and caption. See details below. |
 
 Note that if you don't implement your custom uploader methods, the `endpoints` param is required.
 
@@ -98,21 +99,21 @@ Note that if you don't implement your custom uploader methods, the `endpoints` p
 ![](https://capella.pics/c74cdeec-3405-48ac-a960-f784188cf9b4.jpg)
 
 **Main Settings:**
-1. **With caption** - Toggle caption input visibility
-2. **With Link** - Toggle link input visibility (makes image clickable)
+1. **With caption** - Toggle caption input visibility (enabled by default)
+2. **With Link** - Toggle link input visibility (disabled by default, makes image clickable)
 
 **Size submenu:**
-3. **Small** - 30% width
-4. **Medium** - 60% width  
+3. **Small** - 30% width, centered
+4. **Medium** - 60% width, centered  
 5. **Full width** - 100% width
 
 **Alignment submenu:**
 6. **Left** - Align image to the left
-7. **Center** - Center the image
+7. **Center** - Center the image (default)
 8. **Right** - Align image to the right
 
 **Style submenu:**
-9. **Border** - Add border around image
+9. **Border** - Add decorative border around image
 10. **Background** - Add colored background behind image
 
 Add extra setting-buttons by adding them to the `actions`-array in the configuration:
@@ -132,16 +133,62 @@ actions: [
 
 **_NOTE:_**  return value of `action` callback for settings whether action button should be toggled or not is *deprecated*. Consider using `toggle` option instead.
 
-You can disable features such as border, background tunes and caption by defining `features` in the configuration:
+You can disable features such as border, background, and caption by defining `features` in the configuration:
 ```js
 features: {
-  border: false,
-  caption: 'optional', // Set to 'optional' to show caption as toggle, true/false to force show/hide
-  background: false
+  border: false,        // Disable border option
+  background: false,    // Disable background option  
+  caption: 'optional'   // Show caption as toggleable option (true/false to force show/hide)
 }
 ```
 
-**_NOTE:_** set caption to `optional` in order to configure caption as a tune.
+**_NOTE:_** Set caption to `'optional'` to show it as a toggleable tune in the settings menu. Set to `true` to always show caption input, or `false` to always hide it.
+
+## Enhanced Features
+
+### Size and Alignment
+The tool now includes built-in size presets and alignment options:
+
+- **Size presets**: Choose from Small (30%), Medium (60%), or Full width (100%)
+- **Alignment options**: Left, Center (default), or Right alignment
+- **Visual feedback**: Smooth transitions when changing size or alignment
+
+### Link Functionality
+Make images clickable by enabling the link option:
+
+- Toggle link input visibility in settings
+- When enabled, adds a URL input field below the caption
+- Links open in the current window/tab when image is clicked
+
+### Modern UI
+Enhanced user interface with improved usability:
+
+- **Smooth transitions**: All hover and state changes are animated
+- **Organized menus**: Related options grouped in logical submenus
+- **Consistent styling**: Modern design with improved visual hierarchy
+- **Better input design**: Compact inputs with focus states and hover effects
+
+## Migration from Previous Versions
+
+### Backward Compatibility
+✅ **No breaking changes** - All existing configurations continue to work  
+✅ **Custom uploaders preserved** - Your upload logic remains unchanged  
+✅ **Data structure compatible** - Existing saved content loads correctly  
+
+### New Features Available
+- **Size & Alignment**: Automatically available in settings menu
+- **Link functionality**: Enable via "With Link" toggle in settings  
+- **Enhanced UI**: Improved styling and transitions applied automatically
+
+### Optional Configuration Updates
+```js
+// Optional: Configure new features
+features: {
+  caption: 'optional',  // Show caption as toggle instead of always visible
+  border: true,         // Enable/disable border option (default: true)
+  background: true      // Enable/disable background option (default: true)
+}
+```
 
 ## Output data
 
@@ -150,13 +197,12 @@ This Tool returns `data` with following format
 | Field          | Type      | Description                     |
 | -------------- | --------- | ------------------------------- |
 | file           | `object`  | Uploaded file data. Any data got from backend uploader. Always contain the `url` property |
-| caption        | `string`  | image's caption                 |
-| linkUrl        | `string`  | URL to make image clickable     |
-| withBorder     | `boolean` | add border to image             |
-| withBackground | `boolean` | need to add background          |
-| stretched      | `boolean` | stretch image to screen's width |
-| size           | `string`  | size preset: 'small', 'medium', or 'full' |
-| alignment      | `string`  | alignment: 'left', 'center', or 'right' |
+| caption        | `string`  | Image caption text                 |
+| linkUrl        | `string`  | URL to make image clickable (empty string if no link)     |
+| withBorder     | `boolean` | Whether image has decorative border             |
+| withBackground | `boolean` | Whether image has colored background          |
+| size           | `string`  | Size preset: `'small'`, `'medium'`, or `'full'` (default: `'full'`) |
+| alignment      | `string`  | Image alignment: `'left'`, `'center'`, or `'right'` (default: `'center'`) |
 
 
 ```json
@@ -170,7 +216,6 @@ This Tool returns `data` with following format
         "linkUrl" : "https://tesla.com/roadster",
         "withBorder" : false,
         "withBackground" : false,
-        "stretched" : true,
         "size" : "full",
         "alignment" : "center"
     }
@@ -301,11 +346,11 @@ var editor = EditorJS({
            */
           uploadByUrl(url){
             // your ajax request for uploading
-            return MyAjax.upload(file).then(() => {
+            return MyAjax.upload(url).then(() => {
               return {
                 success: 1,
                 file: {
-                  url: 'https://codex.so/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',,
+                  url: 'https://codex.so/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
                   // any other image data you want to store, such as width, height, color, extension, etc
                 }
               }
