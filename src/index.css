@@ -5,6 +5,11 @@
   --transition-duration: 0.2s;
   --transition-easing: ease-in-out;
 
+  .cdx-input[contenteditable]:empty:after {
+    content: "";
+  }
+
+
   &__image {
     border-radius: 4px;
     overflow: hidden;
