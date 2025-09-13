@@ -218,12 +218,11 @@ export default class ImageTool implements BlockTool {
 
     // Initialize link as disabled by default unless there's existing data
     if (this.data.linkUrl) {
-      debugger;
       this.isLinkEnabled = true;
-      this.ui.applyTune('link', true);
+      this.ui.toggleLinkInput(true);
     } else {
       this.isLinkEnabled = false;
-      this.ui.applyTune('link', false);
+      this.ui.toggleLinkInput(false);
     }
 
     // Apply initial size and alignment from data
@@ -613,19 +612,18 @@ export default class ImageTool implements BlockTool {
     this.ui.applyAlignment(this._data.alignment);
 
     ImageTool.tunes.forEach(({ name: tune }) => {
+      // Skip linkUrl as it's not a boolean tune - it's handled separately
+      if (tune === 'linkUrl') {
+        return;
+      }
+      
       const value = typeof data[tune as keyof ImageToolData] !== 'undefined' ? data[tune as keyof ImageToolData] === true || data[tune as keyof ImageToolData] === 'true' : false;
 
       this.setTune(tune as keyof ImageToolData, value);
     });
 
-    if (data.caption) {
-      this.setTune('caption', true);
-    } else if (this.config.features?.caption === true) {
-      this.setTune('caption', true);
-    }
-
     if (data.linkUrl) {
-      this.ui.applyTune('link', true);
+      this.ui.toggleLinkInput(true);
     }
   }
 
