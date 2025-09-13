@@ -177,26 +177,10 @@ export default class Ui {
       linkInput: linkInput,
     };
 
-    /**
-     * Create base structure
-     *  <wrapper>
-     *    <image-container>
-     *      <image-preloader />
-     *    </image-container>
-     *    <text-inputs-container>
-     *      <caption-wrapper>
-     *        <caption-icon />
-     *        <caption />
-     *      </caption-wrapper>
-     *      <link-wrapper>
-     *        <link-icon />
-     *        <link-input />
-     *      </link-wrapper>
-     *    </text-inputs-container>
-     *    <select-file-button />
-     *  </wrapper>
-     */
     this.nodes.caption.dataset.placeholder = this.config.captionPlaceholder;
+    // Add icon as ::before content via CSS
+    this.nodes.caption.style.setProperty('--input-icon', `url('data:image/svg+xml;utf8,${encodeURIComponent(tablerIcons.textCaption)}')`);
+
     this.nodes.linkInput.dataset.placeholder = 'Enter a link URL...';
 
     this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
