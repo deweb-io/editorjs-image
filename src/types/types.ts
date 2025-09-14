@@ -40,6 +40,11 @@ export interface ActionConfig {
    * An optional action function to be executed when the tune is activated.
    */
   action?: Function;
+
+  /**
+   * An optional flag indicating whether the tune menu should close upon activation.
+   */
+  closeOnActivate?: boolean;
 };
 
 /**

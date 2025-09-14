@@ -203,6 +203,7 @@ export default class ImageTool implements BlockTool {
         icon: tablerIcons.link,
         title: 'With Link',
         toggle: true,
+        closeOnActivate: true,
       },
     ];
   }
@@ -279,6 +280,7 @@ export default class ImageTool implements BlockTool {
         icon: tablerIcons.textCaption,
         title: 'With caption',
         toggle: true,
+        closeOnActivate: true,
       });
     }
 
@@ -333,52 +335,55 @@ export default class ImageTool implements BlockTool {
       tune.name !== 'withBorder' && tune.name !== 'withBackground'
     );
 
-    const tuneItems = filteredTunes.map(tune => ({
-      icon: tune.icon,
-      title: this.api.i18n.t(tune.title),
-      toggle: tune.toggle,
-      isActive: isActive(tune),
-      hint: tune.name === 'linkUrl'
-        ? {
+    const tuneItems = filteredTunes.map((tune) => {
+      return ({
+        icon: tune.icon,
+        title: this.api.i18n.t(tune.title),
+        toggle: tune.toggle,
+        isActive: isActive(tune),
+        closeOnActivate: Boolean(tune.closeOnActivate),
+        hint: tune.name === 'linkUrl'
+          ? {
             title: 'Link Settings',
             description: 'Make image clickable - edit URL in input field below caption',
           }
-        : tune.name === 'caption'
-          ? {
+          : tune.name === 'caption'
+            ? {
               title: 'Caption Display',
               description: 'Show or hide the caption text below the image',
             }
-          : undefined,
-      onActivate: () => {
-        /** If it'a user defined tune, execute it's callback stored in action property */
-        if (typeof tune.action === 'function') {
-          tune.action(tune.name);
+            : undefined,
+        onActivate: () => {
+          /** If it'a user defined tune, execute it's callback stored in action property */
+          if (typeof tune.action === 'function') {
+            tune.action(tune.name);
 
-          return;
-        }
-        let newState = !isActive(tune);
+            return;
+          }
+          let newState = !isActive(tune);
 
-        /**
-         * For the caption tune, we can't rely on the this._data
-         * because it can be manualy toggled by user
-         */
-        if (tune.name === 'caption') {
-          this.isCaptionEnabled = !(this.isCaptionEnabled ?? false);
-          newState = this.isCaptionEnabled;
-        }
+          /**
+           * For the caption tune, we can't rely on the this._data
+           * because it can be manualy toggled by user
+           */
+          if (tune.name === 'caption') {
+            this.isCaptionEnabled = !(this.isCaptionEnabled ?? false);
+            newState = this.isCaptionEnabled;
+          }
 
-        /**
-         * For the linkUrl tune, we can't rely on the this._data
-         * because it can be manualy toggled by user
-         */
-        if (tune.name === 'linkUrl') {
-          this.isLinkEnabled = !(this.isLinkEnabled ?? false);
-          newState = this.isLinkEnabled;
-        }
+          /**
+           * For the linkUrl tune, we can't rely on the this._data
+           * because it can be manualy toggled by user
+           */
+          if (tune.name === 'linkUrl') {
+            this.isLinkEnabled = !(this.isLinkEnabled ?? false);
+            newState = this.isLinkEnabled;
+          }
 
-        this.tuneToggled(tune.name as keyof ImageToolData, newState);
-      },
-    }));
+          this.tuneToggled(tune.name as keyof ImageToolData, newState);
+        },
+      });
+    });
 
     // Create size menu item with children
     const sizeMenuItem = {
