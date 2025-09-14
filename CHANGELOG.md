@@ -3,13 +3,17 @@
 ## [0.0.3] - 2025-09-14
 
 ### Added
-- 
+- **Automated Release Script**: Added `scripts/release-simple.js` for streamlined publishing
+- **Release NPM Scripts**: Added `npm run release`, `release:patch`, `release:minor`, `release:major` commands
+- **Publishing Documentation**: Comprehensive guide in README.md for development and release process
+- **Changelog Format**: Standardized changelog format following Keep a Changelog specification
 
 ### Changed
-- 
+- **README.md**: Expanded with detailed publishing workflow and development setup instructions
+- **Development Process**: Streamlined release process with automated version bumping and git operations
 
 ### Fixed
-- 
+- **Release Workflow**: Automated git status validation, building, committing, and tagging process
 
 
 ## [0.0.2] - 2025-09-14
