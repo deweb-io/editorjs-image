@@ -3,13 +3,15 @@
 ## [0.0.4] - 2025-09-14
 
 ### Added
-- 
+- **closeOnActivate Configuration**: Added `closeOnActivate` option for tune configurations to control whether the tune menu closes automatically when a tune is activated
+- **Automatic Menu Closing**: Link and Caption tunes now automatically close the tune menu when toggled for better user experience
 
 ### Changed
-- 
+- **Tune Configuration Structure**: Enhanced tune configuration objects to support the new `closeOnActivate` property
+- **Code Formatting**: Improved code formatting and structure in tune mapping for better readability
 
 ### Fixed
-- 
+- **User Experience**: Improved tune menu behavior by automatically closing it when appropriate actions are performed
 
 
 ## [0.0.3] - 2025-09-14
