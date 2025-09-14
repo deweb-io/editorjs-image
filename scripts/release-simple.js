@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const fs = require('fs');
 const { execSync } = require('child_process');
 
@@ -10,7 +8,10 @@ const versionType = process.argv[2] || 'patch';
 
 function execCommand(command) {
   try {
-    return execSync(command, { encoding: 'utf8', stdio: 'pipe' }).trim();
+    return execSync(command, {
+      encoding: 'utf8',
+      stdio: 'pipe'
+    }).trim();
   } catch (err) {
     console.error(`❌ Error: ${err.message}`);
     process.exit(1);
@@ -19,18 +20,20 @@ function execCommand(command) {
 
 function getCurrentVersion() {
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+
   return packageJson.version;
 }
 
 function updatePackageVersion(newVersion) {
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+
   packageJson.version = newVersion;
   fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2) + '\n');
 }
 
 function bumpVersion(currentVersion, type) {
   const [major, minor, patch] = currentVersion.split('.').map(Number);
-  
+
   switch (type) {
     case 'major':
       return `${major + 1}.0.0`;
@@ -44,9 +47,11 @@ function bumpVersion(currentVersion, type) {
 
 function updateChangelog(version) {
   const changelogPath = 'CHANGELOG.md';
-  const date = new Date().toISOString().split('T')[0];
-  
+  const date = new Date().toISOString()
+    .split('T')[0];
+
   let content = '';
+
   if (fs.existsSync(changelogPath)) {
     content = fs.readFileSync(changelogPath, 'utf8');
   } else {
@@ -68,7 +73,7 @@ function updateChangelog(version) {
 
   const lines = content.split('\n');
   const headerIndex = lines.findIndex(line => line.startsWith('# Changelog'));
-  
+
   if (headerIndex !== -1) {
     lines.splice(headerIndex + 2, 0, newEntry);
     content = lines.join('\n');
@@ -124,15 +129,17 @@ execCommand(`git push origin v${newVersion}`);
 try {
   const remoteUrl = execCommand('git remote get-url origin');
   let repoUrl = remoteUrl;
+
   if (repoUrl.startsWith('git@github.com:')) {
     repoUrl = repoUrl.replace('git@github.com:', 'https://github.com/').replace('.git', '');
   } else if (repoUrl.endsWith('.git')) {
     repoUrl = repoUrl.slice(0, -4);
   }
-  
+
   const releaseUrl = `${repoUrl}/releases/new`;
+
   console.log(`\n🌐 GitHub Release URL: ${releaseUrl}`);
-  
+
   // Try to open in browser (macOS)
   try {
     execSync(`open "${releaseUrl}"`);
