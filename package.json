@@ -28,7 +28,11 @@
     "lint": "eslint",
     "lint:errors": "eslint --quiet",
     "lint:fix": "eslint --fix",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "release": "node scripts/release-simple.js",
+    "release:patch": "node scripts/release-simple.js patch",
+    "release:minor": "node scripts/release-simple.js minor",
+    "release:major": "node scripts/release-simple.js major"
   },
   "author": {
     "name": "CodeX",

@@ -476,3 +476,154 @@ var editor = EditorJS({
   ...
 });
 ```
+
+## Development & Contributing
+
+### Publishing a New Release
+
+This project includes an automated release script to streamline the publishing process. Follow these steps to publish a new version:
+
+#### Quick Release
+```bash
+# For patch releases (bug fixes)
+npm run release
+
+# For minor releases (new features)  
+npm run release:minor  
+
+# For major releases (breaking changes)
+npm run release:major
+```
+
+#### Manual Release Process
+If you prefer to handle the release manually or need more control:
+
+1. **Ensure clean git status**
+   ```bash
+   git status  # Should show no uncommitted changes
+   ```
+
+2. **Update version and changelog**
+   ```bash
+   # Edit package.json version manually
+   # Edit CHANGELOG.md with release details
+   ```
+
+3. **Build and commit**
+   ```bash
+   npm run build
+   git add .
+   git commit -m "release: vX.X.X - Release description"
+   ```
+
+4. **Create and push tag**
+   ```bash
+   git tag -a vX.X.X -m "Release vX.X.X - Release description"
+   git push origin master
+   git push origin vX.X.X
+   ```
+
+5. **Create GitHub Release**
+   - Go to [GitHub Releases](https://github.com/deweb-io/editorjs-image/releases)
+   - Click "Create a new release"
+   - Select the tag you just created
+   - Add release notes (copy from CHANGELOG.md)
+   - Publish the release
+
+#### Release Script Features
+
+The automated release script handles:
+
+- ✅ **Git status validation** - Ensures no uncommitted changes
+- ✅ **Version bumping** - Updates package.json with semantic versioning
+- ✅ **Changelog generation** - Creates template entry in CHANGELOG.md
+- ✅ **Project building** - Runs npm run build to generate distribution files
+- ✅ **Git operations** - Commits changes, creates tags, pushes to origin
+- ✅ **GitHub integration** - Opens release creation page automatically
+
+#### Changelog Format
+
+The project follows [Keep a Changelog](https://keepachangelog.com/) format. Each release entry should include:
+
+```markdown
+## [X.X.X] - YYYY-MM-DD
+
+### Added
+- New features or capabilities
+
+### Changed  
+- Changes to existing functionality
+
+### Fixed
+- Bug fixes and corrections
+
+### Removed
+- Deprecated or removed features
+```
+
+#### Semantic Versioning
+
+This project follows [Semantic Versioning](https://semver.org/):
+
+- **Patch** (X.X.1) - Bug fixes, no new features, backward compatible
+- **Minor** (X.1.X) - New features, backward compatible  
+- **Major** (1.X.X) - Breaking changes, not backward compatible
+
+#### Example Release Workflow
+
+```bash
+# 1. Make your changes and test thoroughly
+git add .
+git commit -m "fix: support image URLs with query parameters"
+
+# 2. Run the release script
+npm run release  # This creates v0.0.3 automatically
+
+# 3. Edit the generated CHANGELOG.md entry with specific details
+# 4. The script will open GitHub releases page for you to complete
+
+# 5. Optionally publish to npm (if public package)
+npm publish
+```
+
+#### Post-Release Checklist
+
+After publishing a release:
+
+- [ ] Verify the tag appears on GitHub
+- [ ] Check that the release notes are complete  
+- [ ] Update any documentation that references version numbers
+- [ ] Announce the release (if applicable)
+- [ ] Consider publishing to npm if it's a public package
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/deweb-io/editorjs-image.git
+cd editorjs-image
+
+# Install dependencies
+npm install --legacy-peer-deps
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run linting
+npm run lint
+npm run lint:fix
+```
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch: git checkout -b feature-name
+3. Make your changes and test thoroughly
+4. Follow the existing code style and patterns
+5. Update documentation if needed
+6. Submit a pull request with a clear description
+
+For bug reports and feature requests, please use the [GitHub Issues](https://github.com/deweb-io/editorjs-image/issues) page.
