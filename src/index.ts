@@ -340,14 +340,14 @@ export default class ImageTool implements BlockTool {
       isActive: isActive(tune),
       hint: tune.name === 'linkUrl'
         ? {
-          title: 'Link Settings',
-          description: 'Make image clickable - edit URL in input field below caption',
-        }
+            title: 'Link Settings',
+            description: 'Make image clickable - edit URL in input field below caption',
+          }
         : tune.name === 'caption'
           ? {
-            title: 'Caption Display',
-            description: 'Show or hide the caption text below the image',
-          }
+              title: 'Caption Display',
+              description: 'Show or hide the caption text below the image',
+            }
           : undefined,
       onActivate: () => {
         /** If it'a user defined tune, execute it's callback stored in action property */

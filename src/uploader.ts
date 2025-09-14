@@ -1,5 +1,5 @@
-import ajax from '@codexteam/ajax';
-import type { AjaxResponse } from '@codexteam/ajax';
+import { selectFiles, transport, post, contentType } from './utils/nativeFetch';
+import type { FetchResponse } from './utils/nativeFetch';
 import isPromise from './utils/isPromise';
 import type { UploadOptions } from './types/types';
 import type { UploadResponseFormat, ImageConfig } from './types/types';
@@ -52,7 +52,7 @@ export default class Uploader {
 
   /**
    * Handle clicks on the upload file button
-   * Fires ajax.transport()
+   * Fires transport()
    * @param onPreview - callback fired when preview is ready
    */
   public uploadSelectedFile({ onPreview }: UploadOptions): void {
@@ -75,7 +75,7 @@ export default class Uploader {
     if (this.config.uploader && typeof this.config.uploader.uploadByFile === 'function') {
       const uploadByFile = this.config.uploader.uploadByFile;
 
-      upload = ajax.selectFiles({ accept: this.config.types ?? 'image/*' }).then((files: File[]) => {
+      upload = selectFiles({ accept: this.config.types ?? 'image/*' }).then((files: File[]) => {
         preparePreview(files[0]);
 
         const customUpload = uploadByFile(files[0]);
@@ -89,16 +89,16 @@ export default class Uploader {
 
     // default uploading
     } else {
-      upload = ajax.transport({
-        url: this.config.endpoints.byFile,
-        data: this.config.additionalRequestData,
+      upload = transport({
+        url: this.config.endpoints.byFile as string,
+        data: this.config.additionalRequestData as Record<string, unknown>,
         accept: this.config.types ?? 'image/*',
         headers: this.config.additionalRequestHeaders as Record<string, string>,
         beforeSend: (files: File[]) => {
           preparePreview(files[0]);
         },
         fieldName: this.config.field ?? 'image',
-      }).then((response: AjaxResponse) => response.body as UploadResponseFormat);
+      }).then((response: FetchResponse) => response.body as unknown as UploadResponseFormat);
     }
 
     upload.then((response) => {
@@ -110,7 +110,7 @@ export default class Uploader {
 
   /**
    * Handle clicks on the upload file button
-   * Fires ajax.post()
+   * Fires post()
    * @param url - image source url
    */
   public uploadByUrl(url: string): void {
@@ -129,14 +129,14 @@ export default class Uploader {
       /**
        * Default uploading
        */
-      upload = ajax.post({
-        url: this.config.endpoints.byUrl,
+      upload = post({
+        url: this.config.endpoints.byUrl as string,
         data: Object.assign({
           url: url,
         }, this.config.additionalRequestData),
-        type: ajax.contentType.JSON,
+        type: contentType.JSON,
         headers: this.config.additionalRequestHeaders as Record<string, string>,
-      }).then((response: AjaxResponse) => response.body as UploadResponseFormat);
+      }).then((response: FetchResponse) => response.body as unknown as UploadResponseFormat);
     }
 
     upload.then((response: UploadResponseFormat) => {
@@ -148,7 +148,7 @@ export default class Uploader {
 
   /**
    * Handle clicks on the upload file button
-   * Fires ajax.post()
+   * Fires post()
    * @param file - file pasted by drag-n-drop
    * @param onPreview - file pasted by drag-n-drop
    */
@@ -188,12 +188,12 @@ export default class Uploader {
         });
       }
 
-      upload = ajax.post({
-        url: this.config.endpoints.byFile,
+      upload = post({
+        url: this.config.endpoints.byFile as string,
         data: formData,
-        type: ajax.contentType.JSON,
+        type: contentType.JSON,
         headers: this.config.additionalRequestHeaders as Record<string, string>,
-      }).then((response: AjaxResponse) => response.body as UploadResponseFormat);
+      }).then((response: FetchResponse) => response.body as unknown as UploadResponseFormat);
     }
 
     upload.then((response) => {

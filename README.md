@@ -18,6 +18,7 @@ Image Block for the [Editor.js](https://editorjs.io).
 - **NEW**: Alignment options - Left, Center, and Right alignment
 - **NEW**: Enhanced UI with smooth transitions and modern styling
 - **NEW**: Improved menu organization with nested submenus for better UX
+- **NEW**: Native Fetch API - Removed external dependencies, now uses browser's native fetch instead of @codexteam/ajax
 
 **Notes**
 
@@ -26,6 +27,23 @@ This Tool requires server-side implementation for the file uploading. See [backe
 This Tool is also capable of uploading & displaying video files using the `<video>` element. To enable this, specify video mime-types via the 'types' config param.
 
 **Compatibility**: This enhanced version maintains full backward compatibility with existing configurations and custom uploaders.
+
+## Native Fetch Implementation
+
+**Breaking Change Alternative**: As of this version, the tool no longer depends on `@codexteam/ajax` and instead uses the browser's native fetch API. This change:
+
+- ✅ **Reduces bundle size** by eliminating external dependencies
+- ✅ **Improves security** by removing third-party code
+- ✅ **Maintains full compatibility** with existing backend implementations
+- ✅ **Uses modern web standards** with native browser APIs
+
+### Technical Changes
+- File selection now uses native HTML file input instead of ajax.selectFiles()
+- File uploads use fetch API with FormData for multipart uploads
+- URL uploads use fetch API with JSON payloads
+- All error handling and response formats remain identical
+
+**No changes required** to your existing backend endpoints or custom uploader implementations.
 
 
 ## Installation
@@ -88,9 +106,9 @@ Image Tool supports these configuration parameters:
 | ----- | -------- | ------------------ |
 | endpoints | `{byFile: string, byUrl: string}` | Endpoints for file uploading. <br> Contains 2 fields: <br> __byFile__ - for file uploading <br> __byUrl__ - for uploading by URL |
 | field | `string` | (default: `image`) Name of uploaded image field in POST request |
-| types | `string` | (default: `image/*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
+| types | `string` | (default: `image/*`) Mime-types of files that can be accepted with file selection. |
 | additionalRequestData | `object` | Object with any data you want to send with uploading requests |
-| additionalRequestHeaders | `object` | Object with any custom headers which will be added to request. [See example](https://github.com/codex-team/ajax/blob/e5bc2a2391a18574c88b7ecd6508c29974c3e27f/README.md#headers-object) |
+| additionalRequestHeaders | `object` | Object with any custom headers which will be added to request |
 | captionPlaceholder | `string` | (default: `Caption`) Placeholder for Caption input |
 | linkPlaceholder | `string` | (default: `Add link URL`) Placeholder for Link input |
 | buttonContent | `string` | Allows to override HTML content of «Select file» button |
@@ -180,6 +198,7 @@ Enhanced user interface with improved usability:
 ✅ **No breaking changes** - All existing configurations continue to work  
 ✅ **Custom uploaders preserved** - Your upload logic remains unchanged  
 ✅ **Data structure compatible** - Existing saved content loads correctly  
+✅ **Native Fetch** - Removed @codexteam/ajax dependency for lighter bundle size  
 
 ### New Features Available
 - **Size & Alignment**: Automatically available in settings menu
@@ -195,6 +214,76 @@ features: {
   background: true      // Enable/disable background option (default: true)
 }
 ```
+
+## Technical Implementation
+
+### Native Fetch API
+
+This version has been updated to use the browser's native fetch API instead of the `@codexteam/ajax` library. The changes include:
+
+#### What Changed
+- **Dependency Removal**: No longer requires `@codexteam/ajax` package
+- **File Selection**: Uses native HTML file input dialog
+- **HTTP Requests**: All uploads now use fetch API with proper FormData/JSON handling
+- **Error Handling**: Maintains the same error patterns with native JavaScript
+
+#### Implementation Details
+```javascript
+// File selection (replaces ajax.selectFiles)
+const selectFiles = (options) => {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = options.accept;
+    input.click();
+    // ... handles file selection
+  });
+};
+
+// File upload (replaces ajax.transport)
+const transport = async (options) => {
+  const files = await selectFiles({ accept: options.accept });
+  const formData = new FormData();
+  formData.append(options.fieldName, files[0]);
+  
+  const response = await fetch(options.url, {
+    method: 'POST',
+    body: formData,
+    headers: options.headers
+  });
+  
+  return { body: await response.json() };
+};
+
+// URL upload (replaces ajax.post)
+const post = async (options) => {
+  const response = await fetch(options.url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options.headers },
+    body: JSON.stringify(options.data)
+  });
+  
+  return { body: await response.json() };
+};
+```
+
+#### Benefits
+- **Smaller Bundle**: Reduces package size by eliminating external dependencies
+- **Better Security**: Fewer third-party dependencies reduce potential vulnerabilities  
+- **Modern Standards**: Uses current web platform APIs
+- **Better Performance**: Native browser APIs are typically faster than external libraries
+
+#### Migration Impact
+**Zero migration required** - All existing backend endpoints, custom uploaders, and configurations continue to work without any changes. The HTTP requests sent to your backend remain identical in format and structure.
+
+#### Browser Compatibility
+The native fetch API is supported in all modern browsers:
+- Chrome 42+ (2015)
+- Firefox 39+ (2015)  
+- Safari 10.1+ (2017)
+- Edge 14+ (2016)
+
+For older browser support, you can include a fetch polyfill in your application.
 
 ## Output data
 
@@ -333,12 +422,21 @@ var editor = EditorJS({
            * @return {Promise.<{success, file: {url}}>}
            */
           uploadByFile(file){
-            // your own uploading logic here
-            return MyAjax.upload(file).then(() => {
+            // your own uploading logic here (using fetch, axios, or any HTTP client)
+            return fetch('/upload', {
+              method: 'POST',
+              body: (() => {
+                const formData = new FormData();
+                formData.append('image', file);
+                return formData;
+              })()
+            })
+            .then(response => response.json())
+            .then(result => {
               return {
                 success: 1,
                 file: {
-                  url: 'https://codex.so/upload/redactor_images/o_80beea670e49f04931ce9e3b2122ac70.jpg',
+                  url: result.url,
                   // any other image data you want to store, such as width, height, color, extension, etc
                 }
               };
@@ -351,12 +449,20 @@ var editor = EditorJS({
            * @return {Promise.<{success, file: {url}}>}
            */
           uploadByUrl(url){
-            // your ajax request for uploading
-            return MyAjax.upload(url).then(() => {
+            // your own uploading logic here (using fetch, axios, or any HTTP client)
+            return fetch('/upload-by-url', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ url })
+            })
+            .then(response => response.json())
+            .then(result => {
               return {
                 success: 1,
                 file: {
-                  url: 'https://codex.so/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
+                  url: result.url,
                   // any other image data you want to store, such as width, height, color, extension, etc
                 }
               }
