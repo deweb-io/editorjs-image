@@ -28,9 +28,8 @@
  * },
  */
 
-import type { TunesMenuConfig } from '@editorjs/editorjs/types/tools';
-import type { API, ToolboxConfig, PasteConfig, BlockToolConstructorOptions, BlockTool, BlockAPI, PasteEvent, PatternPasteEventDetail, FilePasteEventDetail } from '@editorjs/editorjs';
-import './index.css';
+import type { MenuConfig, TunesMenuConfig } from '@editorjs/editorjs/types/tools';
+import type { API, ToolboxConfig, PasteConfig, BlockToolConstructorOptions, BlockTool, BlockAPI, PasteEvent, PatternPasteEventDetail, FilePasteEventDetail, HintParams } from '@editorjs/editorjs';
 
 import Ui, { tablerIcons } from './ui';
 import Uploader from './uploader';
@@ -100,6 +99,7 @@ export default class ImageTool implements BlockTool {
     this.api = api;
     this.block = block;
 
+    if (!config) throw new Error('Config is required for Image Tool');
     /**
      * Tool's initial config
      */
@@ -330,6 +330,29 @@ export default class ImageTool implements BlockTool {
       return this.data.alignment === alignment;
     };
 
+    /**
+     * Get hint for a specific tune
+     * @param tune - tune to get hint for
+     * @returns HintParams
+     */
+    function getTuneHint(tune: ActionConfig) {
+      if (tune.name === 'linkUrl') {
+        return {
+          title: 'Link Settings',
+          description: 'Make image clickable - edit URL in input field below caption',
+        };
+      }
+
+      if (tune.name === 'caption') {
+        return {
+          title: 'Caption Display',
+          description: 'Show or hide the caption text below the image',
+        };
+      }
+
+      return;
+    }
+
     // Filter out border and background from main menu (they'll be in Style submenu)
     const filteredTunes = availableTunes.filter(tune =>
       tune.name !== 'withBorder' && tune.name !== 'withBackground'
@@ -342,17 +365,7 @@ export default class ImageTool implements BlockTool {
         toggle: tune.toggle,
         isActive: isActive(tune),
         closeOnActivate: Boolean(tune.closeOnActivate),
-        hint: tune.name === 'linkUrl'
-          ? {
-            title: 'Link Settings',
-            description: 'Make image clickable - edit URL in input field below caption',
-          }
-          : tune.name === 'caption'
-            ? {
-              title: 'Caption Display',
-              description: 'Show or hide the caption text below the image',
-            }
-            : undefined,
+        hint: getTuneHint(tune),
         onActivate: () => {
           /** If it'a user defined tune, execute it's callback stored in action property */
           if (typeof tune.action === 'function') {
@@ -512,7 +525,7 @@ export default class ImageTool implements BlockTool {
       sizeMenuItem,
       alignmentMenuItem,
       styleMenuItem,
-    ];
+    ] as MenuConfig;
   }
 
   /**

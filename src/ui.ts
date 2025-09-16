@@ -14,12 +14,12 @@ export const tablerIcons = {
   boxFull: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M8 8 3 3m18 0-5 5m0 8 5 5M3 21l5-5"/></svg>',
   textCaption: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15h16" /><path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M4 20h12" /></svg>',
 };
-
 /**
  * Autofocus delay in milliseconds
- */
+*/
 const autofocusDelay = 100;
 
+import './index.css';
 import { make } from './utils/dom';
 import type { API } from '@editorjs/editorjs';
 import type { ImageConfig } from './types/types';

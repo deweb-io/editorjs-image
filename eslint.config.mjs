@@ -14,32 +14,33 @@ export default [
       },
     },
     rules: {
-        'n/no-missing-import': ['off'],
-        'n/no-unsupported-features/node-builtins': ['off'],
-        'jsdoc/require-returns-description': ['off'],
-        "@typescript-eslint/naming-convention": [
-          "error",
-          {
-            "selector": "variable",
-            "format": ["camelCase"],
-            "leadingUnderscore": "allow"
+      '@typescript-eslint/explicit-function-return-type': ['off'],
+      'n/no-missing-import': ['off'],
+      'n/no-unsupported-features/node-builtins': ['off'],
+      'jsdoc/require-returns-description': ['off'],
+      "@typescript-eslint/naming-convention": [
+        "error",
+        {
+          "selector": "variable",
+          "format": ["camelCase"],
+          "leadingUnderscore": "allow"
+        },
+      ],
+      "@typescript-eslint/ban-types": ["error",
+        {
+          "types": {
+            "String": true,
+            "Boolean": true,
+            "Number": true,
+            "Symbol": true,
+            "{}": false,
+            "Object": true,
+            "object": false,
+            "Function": false,
           },
-        ],
-        "@typescript-eslint/ban-types": ["error",
-            {
-                "types": {
-                    "String": true,
-                    "Boolean": true,
-                    "Number": true,
-                    "Symbol": true,
-                    "{}": false,
-                    "Object": true,
-                    "object": false,
-                    "Function": false,
-                },
-                "extendDefaults": true
-            }
-        ]
+          "extendDefaults": true
+        }
+      ]
     }
   },
   {
